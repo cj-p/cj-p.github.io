@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>WebRTC</title>
+    <link rel="stylesheet" href="style.css"/>
+</head>
+<body class="local disconnected">
+<h2>내 화면</h2>
+<video id="localVideo" autoplay width="480px" playsinline></video>
+
+<h2>상대방 화면</h2>
+<video id="remoteVideo" autoplay width="480px" playsinline></video>
+<button id="invite">상대방 초대하기</button>
+
+<script src="script.js" type="module"></script>
+</body>
+</html>
