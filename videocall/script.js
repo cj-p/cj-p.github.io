@@ -75,11 +75,11 @@ onMessage('SDP', async (descriptionInit, from) => {
 let i = 0;
 
 rtcPeerConnection.addEventListener('iceconnectionstatechange', e => {
-  console.log(rtcPeerConnection.iceconnectionstate);
+  console.log(rtcPeerConnection.iceConnectionState);
 });
 
 rtcPeerConnection.addEventListener('connectionstatechange', e => {
-  console.log(rtcPeerConnection.connectionstate);
+  console.log(rtcPeerConnection.connectionState);
 });
 
 // ICE 후보 교환
