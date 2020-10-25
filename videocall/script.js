@@ -1,6 +1,5 @@
 import {getConnectionId, onMessage, sendMessage} from "./message.js";
 
-let localConnectionId;
 let remoteConnectionId = location.search.match(/[?&]connectionId=([^?&$]*)/)?.[1];
 const inviteButton = document.getElementById('invite');
 const localVideo = document.getElementById('localVideo');
@@ -17,16 +16,16 @@ const rtcPeerConnection = new RTCPeerConnection({
   }]
 });
 
-if(remoteConnectionId){
+if (remoteConnectionId) {
   document.body.classList.remove("disconnected");
   document.body.classList.remove("local");
   document.body.classList.add("remote");
   inviteButton.remove();
-}else{
-  inviteButton.addEventListener('click', () => navigator.share({
+} else {
+  inviteButton.addEventListener('click', async () => navigator.share({
     title: document.title,
     text: '화상통화를 하려면 들어오시오',
-    url: `${location.href}?connectionId=${localConnectionId}`,
+    url: `${location.href}?connectionId=${(await getConnectionId())}`,
   }))
 }
 
@@ -48,9 +47,6 @@ const sendIceCandidate = candidate => {
   sendMessage(remoteConnectionId, 'ICE', candidate);
 };
 
-// 자신의 connectionId를 받아서 화면에 표시
-getConnectionId().then(connectionId => localConnectionId = connectionId);
-
 // 웹캠 화면 가져와 화면에 표시
 navigator.mediaDevices
   .getUserMedia({video: true, audio: false})
@@ -60,7 +56,7 @@ navigator.mediaDevices
   });
 
 // SDP offer/answer 교환
-if(remoteConnectionId) rtcPeerConnection.addEventListener('negotiationneeded', sendSdpOffer)
+if (remoteConnectionId) rtcPeerConnection.addEventListener('negotiationneeded', sendSdpOffer)
 
 // inviteButton.addEventListener('click', sendSdpOffer)
 onMessage('SDP', async (descriptionInit, from) => {
@@ -76,15 +72,24 @@ onMessage('SDP', async (descriptionInit, from) => {
   }
 })
 
-let i =0;
+let i = 0;
+
+rtcPeerConnection.addEventListener('iceconnectionstatechange', e => {
+  console.log(rtcPeerConnection.iceconnectionstate);
+});
+
+rtcPeerConnection.addEventListener('connectionstatechange', e => {
+  console.log(rtcPeerConnection.connectionstate);
+});
+
 // ICE 후보 교환
 rtcPeerConnection.addEventListener('icecandidate', e => e.candidate == null || sendIceCandidate(e.candidate));
 onMessage('ICE', candidateInit => {
   i++;
   console.log(i, candidateInit);
-  try{
+  try {
     return rtcPeerConnection.addIceCandidate(new RTCIceCandidate(candidateInit));
-  }catch (e) {
+  } catch (e) {
     console.log(i)
     console.error(e)
   }
