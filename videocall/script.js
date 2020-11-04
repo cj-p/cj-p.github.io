@@ -79,7 +79,15 @@ rtcPeerConnection.addEventListener('iceconnectionstatechange', e => {
 });
 
 rtcPeerConnection.addEventListener('connectionstatechange', e => {
-  console.log(rtcPeerConnection.connectionState);
+  switch(rtcPeerConnection.connectionState){
+    case "closed":
+    case "connected":
+    case "connecting":
+    case "disconnected":
+    case "failed":
+    case "new":
+    default:
+  }
 });
 
 // ICE 후보 교환
